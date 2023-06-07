@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>나를 소개하는 웹페이지</title>
+        <style>
+            @font-face {
+                font-family: 'NanumSquareNeo-Variable';
+                src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2") format('woff2');
+                font-weight: normal;
+                font-style: normal;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f1f1f1;
+                margin: 0;
+                padding: 0;
+                font-family: 'NanumSquareNeo-Variable';
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            h1 {
+                text-align: center;
+            }
+
+            header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            section {
+                margin-bottom: 30px;
+                padding: 20px;
+                background-color: white;
+                border-radius: 5px;
+                box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.1);
+
+                transition: all 0.2s;
+            }
+
+            section:hover {
+                transform: scale(1.05, 1.05);
+            }
+
+            .highlight {
+                background-color: #ffeeba;
+                padding: 5px;
+                border-radius: 5px;
+            }
+
+            ul {
+                list-style-type: square;
+            }
+
+            ul li {
+                margin-bottom: 5px;
+            }
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            table,
+            td,
+            th {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            th {
+                background-color: rgb(240, 240, 240);
+            }
+
+            td:hover {
+                background-color: rgb(23, 255, 74);
+            }
+
+            form {
+                margin-top: 20px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            textarea {
+                display: block;
+                width: 97%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            input[type="submit"] {
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #45a049;
+            }
+
+            #player {
+                position: fixed;
+                top: 0;
+                right: 0;
+                display: inline-flex;
+                flex-wrap: wrap;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                border: none;
+            }
+
+            #btnArea {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+            }
+
+            #darkModeBtn {
+                position: relative;
+                border-radius: 50px;
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                transition: all 0.5s;
+            }
+
+            #darkModeBtn:hover {
+                cursor: pointer;
+                transform: scale(1.1, 1.1);
+            }
+
+            #darkModeBtn > img {
+                position: absolute;
+                top: -2px;
+                left: -2px;
+            }
+
+            #canvasArea {
+                position: fixed;
+                top: 10px;
+                left: 20px;
+            }
+        </style>
+
+        <script>
+            var dark = false;
+            var img_src = ["https://cdn-icons-png.flaticon.com/512/5261/5261906.png", "https://cdn-icons-png.flaticon.com/512/5262/5262027.png"];
+
+            function init() {
+                drawClock();
+                setInterval(drawClock, 1000);
+            }
+
+            function drawClock() {
+                var canvas = document.getElementById("myCanvas");
+                var context = canvas.getContext("2d");
+
+                // 현재 시간 정보 가져오기
+                var date = new Date();
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var seconds = date.getSeconds();
+
+                if (dark) {
+                    context.strokeStyle = "white";
+                    context.fillStyle = "white";
+                } else {
+                    context.strokeStyle = "black";
+                    context.fillStyle = "black";
+                }
+
+                // 캔버스 초기화
+                context.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 시계 바깥 원 그리기
+                context.beginPath();
+                context.arc(
+                    canvas.width / 2,
+                    canvas.height / 2,
+                    canvas.width / 2 - 10,
+                    0,
+                    Math.PI * 2
+                );
+                context.stroke();
+
+                // 시침 그리기
+                context.save();
+                context.translate(canvas.width / 2, canvas.height / 2);
+                context.rotate(((hours % 12) * Math.PI) / 6 + (minutes * Math.PI) / 360);
+                context.lineWidth = 6;
+                context.lineCap = "round";
+                context.moveTo(0, 0);
+                context.lineTo(0, -canvas.height / 4);
+                context.stroke();
+                context.restore();
+
+                // 분침 그리기
+                context.save();
+                context.translate(canvas.width / 2, canvas.height / 2);
+                context.rotate((minutes * Math.PI) / 30 + (seconds * Math.PI) / 1800);
+                context.lineWidth = 4;
+                context.lineCap = "round";
+                context.moveTo(0, 0);
+                context.lineTo(0, -canvas.height / 3);
+                context.stroke();
+                context.restore();
+
+                // 초침 그리기
+                context.save();
+                context.translate(canvas.width / 2, canvas.height / 2);
+                context.rotate((seconds * Math.PI) / 30);
+                context.lineWidth = 2;
+                context.lineCap = "round";
+                context.moveTo(0, 10);
+                context.lineTo(0, -canvas.height / 2.5);
+                context.stroke();
+                context.restore();
+
+                // 시계 중심 원 그리기
+                context.beginPath();
+                context.arc(canvas.width / 2, canvas.height / 2, 5, 0, Math.PI * 2);
+                context.fill();
+            }
+
+            function songChange(obj) {
+                var src = obj
+                    .options[obj.selectedIndex]
+                    .value;
+                var audio = document.getElementsByTagName("audio")[0];
+                audio.src = src;
+            }
+
+            function darkMode() {
+                var section = document.getElementsByTagName("section");
+                var th = document.getElementsByTagName("th");
+                var img = document.getElementById("darkModeImg");
+                var section_color,
+                    th_color;
+                var section_box_shadow;
+
+                if (dark) {
+                    dark = false;
+                    document.body.style.backgroundColor = "#f1f1f1";
+                    document.body.style.color = "black";
+                    section_color = "white";
+                    section_box_shadow = "10px 10px 5px rgba(0, 0, 0, 0.1)";
+                    th_color = "rgb(240, 240, 240)";
+                    img.src = img_src[0];
+                } else {
+                    dark = true;
+                    document.body.style.backgroundColor = "#252525";
+                    document.body.style.color = "#f1f1f1";
+                    section_color = "#181818";
+                    section_box_shadow = "10px 10px 5px rgba(255, 255, 255, 0.1)";
+                    th_color = "rgb(5, 5, 5)";
+                    img.src = img_src[1];
+                }
+
+                for (var i = 0; i < section.length; i++) {
+                    section[i].style.backgroundColor = section_color;
+                    section[i].style.boxShadow = section_box_shadow;
+                }
+
+                for (var i = 0; i < th.length; i++) 
+                    th[i].style.backgroundColor = th_color;
+
+                }
+        </script>
+    </head>
+    <body onload="init()">
+        <header>
+            <h1>나를 소개하는 웹페이지</h1>
+        </header>
+        <div class="container">
+
+            <section>
+                <h3>주제 선정 동기와 이루고 싶은 목표</h3>
+                <p>저는 웹 개발에 관심을 가지고 있으며, 웹 기술의 빠른 발전 속에서 변화하는 요구사항에 맞춰 새로운 솔루션을 제공하고, 사용자들의 편의성과
+                    만족도를 높일 수 있는 서비스를 개발하는 것이 제 목표입니다.</p>
+
+                <p>주제 선정 동기로는 다음과 같은 이유들이 있습니다:</p>
+                <ul>
+                    <li>인터넷과 웹 기술은 현대 사회에서 더이상 빠져나갈 수 없는 중요한 요소입니다. 사람들은 웹을 통해 다양한 정보를 찾고, 소통하며,
+                        비즈니스를 진행합니다. 웹 개발을 통해 이러한 영역에 기여하고자 합니다.</li>
+                    <li>웹 기술의 발전은 계속되고 있습니다. 새로운 프레임워크, 도구, 표준 등이 나타나고 있으며, 이에 대한 학습과 적용은 저에게 지속적인
+                        도전과 성장 기회를 제공합니다.</li>
+                    <li>사용자 경험을 개선하고, 편리한 인터페이스를 제공하는 웹 서비스의 중요성이 증가하고 있습니다. 사용자들의 니즈와 행동을 이해하고 반영하는
+                        서비스를 개발하여, 사람들에게 가치 있는 경험을 선사하고자 합니다.</li>
+                </ul>
+
+                <p>이루고 싶은 목표는 다음과 같습니다:</p>
+                <ul>
+                    <li>다양한 웹 기술을 습득하여, 효과적으로 활용할 수 있는 개발자가 되기 위해 지속적인 학습과 개인 프로젝트를 진행하고자 합니다.</li>
+                    <li>사용자들의 니즈와 요구에 맞는 웹 서비스를 개발하여, 사용자들의 편의성과 만족도를 높일 수 있는 기능과 인터페이스를 구현하고자 합니다.</li>
+                    <li>새로운 도전과 프로젝트를 통해, 웹 개발 분야에서 창의적이고 혁신적인 솔루션을 제공할 수 있는 능력을 기르고자 합니다.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>본인 성장 과정</h3>
+                <p>저에게 가장 큰 영향을 끼친 사건은 학부 시절 웹 개발 경험입니다. 실제 서비스를 구현하는 과정에서 많은 도전과 문제에 직면하였습니다.
+                    하지만, 문제를 해결하고 완성했을 때의 성취감은 이루 말할 수 없었습니다. 이 경험을 통해 웹 개발자로서의 역량을 키우고, 지속적인 성장과
+                    학습에 힘쓰는 중입니다.</p>
+            </section>
+
+            <section>
+                <h3>최근 사회 이슈에 대한 견해 기술</h3>
+                <p>요즘 챗GPT와 같은 자연어 처리 모델은 인공지능 기술의 발전으로 많은 관심을 받고 있습니다. 이러한 모델은 언어 이해와 생성 능력을
+                    갖추어 다양한 작업에 활용되고 있습니다. 하지만 챗GPT가 가진 잠재적인 문제점과 윤리적 고려 사항을 고려해야 합니다.</p>
+
+                <p>첫째로, 챗GPT는 훈련 데이터에 있는 편향성을 반영할 수 있습니다. 훈련 데이터에 내재된 사회적 편견이 모델의 응답에 영향을 미칠 수
+                    있으며, 이는 사회적 불평등을 재생산할 수 있는 위험성이 있습니다. 이러한 편향성을 최소화하고 공정성을 보장하기 위해 다양한 데이터를 사용하고
+                    훈련 데이터의 선별적인 수정이 필요합니다.</p>
+
+                <p>둘째로, 챗GPT는 정보의 정확성과 신뢰성을 보장할 수 없습니다. 모델은 훈련 데이터를 기반으로 작동하므로, 훈련 데이터에 있는 오류나
+                    잘못된 정보를 반영할 수 있습니다. 사용자는 챗GPT가 제공하는 정보를 받아들일 때 항상 비판적인 사고를 유지하고 다른 출처에서의 정보 확인을
+                    필요로 합니다.</p>
+
+                <p>마지막으로, 챗GPT는 언어 모델로써 도덕적인 문제를 제기할 수 있습니다. 모델이 유해하거나 혐오스러운 내용을 생성할 수 있으며, 사용자의
+                    입력에 대해 항상 윤리적인 응답을 보장할 수 없습니다. 이에 대한 윤리적 가이드라인과 법적 규제가 필요하며, 사용자도 챗GPT의 응답을 받아들일
+                    때 자기 책임과 비판적인 사고를 유지해야 합니다.</p>
+
+                <p>요약하자면, 챗GPT와 같은 자연어 처리 모델은 혁신적이고 흥미로운 기술이지만, 편향성, 정보의 정확성, 도덕적 문제 등에 대한 주의가
+                    필요합니다. 이러한 모델의 발전과 사용에는 윤리적, 사회적인 측면을 고려하여 개선되어야 한다고 생각합니다.</p>
+            </section>
+
+            <section>
+                <h3>프로젝트 / 과제 중 기술적으로 가장 어려웠던 부분과 해결 방안</h3>
+
+                <p>리눅스 강의에서 수행한 프로젝트 중 가장 어려웠던 부분은 파이프 기능을 구현하는 것이었습니다. 프로젝트는 리눅스의 shell을 시스템 호출
+                    함수를 이용하여 직접 구현하는 과제였습니다. 파이프 기능을 구현하는 과정에서 여러 어려움이 있었으며, 다음과 같은 절차를 거쳐 문제를
+                    해결하였습니다.</p>
+
+                <h4>과제개요</h4>
+                <p>과제는 사용자가 입력한 명령어를 shell에서 실행하는 기능을 구현하는 것이었습니다. 파이프(|) 연산자를 이용하여 여러 명령어를 동시에
+                    실행하고, 입력 및 출력 재지정(<와 >)을
+                    지원해야 했습니다. 목표는 사용자가 입력한 명령어를 실행하고, 앞 명령어의 결과를 뒤 명령어의 입력으로 전달하며, 모든 명령어의 실행 결과를
+                    출력 파일에 저장하는 것이었습니다.</p>
+
+                    <h4>어려웠던 점</h4>
+                    <p>파이프 기능을 구현하는 것이 가장 어려웠습니다. 여러 명령어가 동시에 입력으로 들어오는 상황에서 각 명령어를 실행하고, 앞 명령어의 결과를
+                        뒤 명령어의 입력으로 전달하는 작업은 복잡했습니다. 또한 입력 및 출력 재지정도 고려해야 했기 때문에 명령어의 구문을 파싱하고, 파일
+                        디스크립터를 조작하는 부분에서 많은 어려움이 있었습니다.</p>
+
+                    <h4>해결 방법</h4>
+                    <p>파이프 기능을 구현하기 위해 fork(), pipe(), exec() 등의 시스템 호출 함수를 사용하였습니다. 먼저, 사용자로부터 입력받은
+                        명령어를 파싱하여 각각의 명령어와 인수들로 분리했습니다. 그리고 fork() 함수를 사용하여 자식 프로세스를 생성하고, pipe() 함수를
+                        사용하여 파이프를 생성했습니다. 자식 프로세스는 exec() 함수를 호출하여 각 명령어를 실행하고, 파이프를 통해 입력과 출력을 연결했습니다.
+                        이렇게 연결된 명령어들은 순차적으로 실행되며, 앞 명령어의 결과가 뒤 명령어의 입력으로 전달되는 흐름을 구현하였습니다.</p>
+
+                    <h4>결과</h4>
+                    <p>해당 프로젝트를 통해 파이프 기능을 성공적으로 구현할 수 있었습니다. 사용자가 입력한 명령어를 정확히 실행하고, 명령어 간의 데이터 흐름을
+                        파이프로 연결하여 올바른 결과를 얻을 수 있었습니다. 이를 통해 시스템 호출 함수의 활용과 프로세스 간 통신의 중요성에 대해 깊은 이해를 할 수
+                        있었고, 기술적인 어려움을 극복하며 프로젝트를 완수할 수 있었습니다.</p>
+
+                    <h4>프로그램 코드</h4>
+
+                    <iframe src="code.html" frameborder="0" style="width: 100%; height: 500px;"></iframe>
+
+                </section>
+
+                <section>
+                    <h3>역량 및 경험</h3>
+                    <ul>
+                        <li>
+                            <span>웹 개발:</span>
+                            HTML, CSS, JavaScript를 사용하여 정적인 웹페이지를 구축할 수 있습니다.</li>
+                        <li>
+                            <span>프로그래밍 언어:</span>
+                            Java, Python을 활용한 프로그래밍 경험이 있습니다.</li>
+                        <li>
+                            <span>데이터베이스:</span>
+                            MySQL, Oracle을 사용하여 데이터를 관리하고 쿼리를 작성할 수 있습니다.</li>
+                        <li>
+                            <span>버전 관리:</span>
+                            Git을 사용하여 협업하고 버전 관리를 할 수 있습니다.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>프로젝트</h3>
+                    <table>
+                        <tr>
+                            <th>프로젝트명</th>
+                            <th>역할</th>
+                            <th>사용 기술</th>
+                        </tr>
+                        <tr>
+                            <td>온라인 쇼핑몰 웹사이트</td>
+                            <td>풀스택 개발자</td>
+                            <td>Java, Spring Framework, MySQL, HTML, CSS, JavaScript</td>
+                        </tr>
+                        <tr>
+                            <td>블로그 웹 애플리케이션</td>
+                            <td>백엔드 개발자</td>
+                            <td>Python, Django, PostgreSQL, HTML, CSS, JavaScript</td>
+                        </tr>
+                        <tr>
+                            <td>사내 업무 시스템 개선</td>
+                            <td>프론트엔드 개발자</td>
+                            <td>HTML, CSS, JavaScript, jQuery</td>
+                        </tr>
+                    </table>
+                </section>
+
+                <section>
+                    <h3>연락처</h3>
+                    <p>이름: 김남훈</p>
+                    <p>이메일: skagns3485@naver.com</p>
+                </section>
+
+                <section>
+                    <h3>문의 메시지</h3>
+                    <form action="submit_form.php" method="post" id="contact-form">
+                        <label for="name">이름:</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            required="required"
+                            placeholder="이름을 입력해주세요">
+
+                        <label for="email">이메일:</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required="required"
+                            placeholder="이메일을 입력해주세요">
+
+                        <label for="message">메시지:</label>
+                        <textarea
+                            id="message"
+                            name="message"
+                            required="required"
+                            placeholder="메시지를 입력해주세요"></textarea>
+
+                        <div style="display: flex; justify-content: flex-end">
+                            <input type="submit" value="전송">
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <script>
+                // contact-form 폼 제출 이벤트 처리
+                var contactForm = document.getElementById('contact-form');
+                contactForm.addEventListener('submit', function (event) {
+                    event.preventDefault(); // 폼 제출 이벤트 기본 동작 방지
+
+                    var nameInput = document.getElementById('name');
+                    var emailInput = document.getElementById('email');
+                    var messageInput = document.getElementById('message');
+
+                    var name = nameInput.value;
+                    var email = emailInput.value;
+                    var message = messageInput.value;
+
+                    var data = {
+                        name: name,
+                        email: email,
+                        message: message
+                    };
+
+                    console.log('전송할 데이터:', data);
+
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    messageInput.value = '';
+
+                    alert('메시지가 성공적으로 전송되었습니다.');
+                });
+            </script>
+
+            <div id="player">
+                <select name="music_list" id="music_list" onchange="songChange(this)">
+                    <option
+                        value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+                        selected="selected">SoundHelix-Song-1</option>
+                </select>
+
+                <script>
+                    // select 요소인 music_list에 option 동적 추가
+                    var mp3_src;
+                    var music_list = document.getElementById("music_list");
+                    var new_option;
+                    for (var i = 1; i < 10; i++) {
+                        mp3_src = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-" + (
+                            i + 1
+                        ) + ".mp3";
+                        new_option = document.createElement("option");
+                        new_option.value = mp3_src;
+                        new_option.innerHTML = "SoundHelix-Song-" + (
+                            i + 1
+                        );
+
+                        music_list.appendChild(new_option);
+                    }
+                </script>
+
+                <audio
+                    src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+                    controls="controls"
+                    loop="loop">오디오</audio>
+            </div>
+
+            <div id="btnArea">
+                <button id="darkModeBtn" onclick="darkMode()"><img
+                    src="https://cdn-icons-png.flaticon.com/512/5261/5261906.png"
+                    id="darkModeImg"
+                    alt=""
+                    width="50px"
+                    height="50px"></button>
+            </div>
+
+            <div id="canvasArea">
+                <canvas id="myCanvas" width="150" height="150"></canvas>
+            </div>
+
+            <footer></footer>
+        </body>
+    </html>
